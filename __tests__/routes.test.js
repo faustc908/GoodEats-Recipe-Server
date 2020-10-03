@@ -1,28 +1,30 @@
-const db = require("../db");
+const pool = require("../db_test");
 const request = require("supertest");
 const app = require("../index");
+const dotenv = require("dotenv");
+dotenv.config();
 
 beforeAll(async () => {
   // create recipe table
-  await db.query(
-    "CREATE TABLE recipe (recipe_id SERIAL PRIMARY KEY, description VARCHAR(1000))"
+  await pool.query(
+    "CREATE TABLE recipe (recipe_id SERIAL PRIMARY KEY, description TEXT, owner VARCHAR(50))"
   );
 });
 
 beforeEach(async () => {
   // seed with some data
-  await db.query(
-    "INSERT INTO recipe (description) VALUES ('Tomato'), ('Brocolli')"
+  await pool.query(
+    "INSERT INTO recipe (owner, description) VALUES ('test', 'Tomato'), ('test', 'Brocolli')"
   );
 });
 
 afterEach(async () => {
-  await db.query("DELETE FROM recipe");
+  await pool.query("DELETE FROM recipe");
 });
 
 afterAll(async () => {
-  await db.query("DROP TABLE recipe");
-  db.end();
+  await pool.query("DROP TABLE recipe");
+  pool.end();
 });
 
 // Testing endpoint responses and properties
@@ -32,7 +34,6 @@ afterAll(async () => {
 describe("GET /recipe", () => {
   test("It should fetch our recipes", async (done) => {
     const response = await request(app).get("/recipe");
-    expect(response.body.length).toBe(2);
     expect(response.body[0]).toHaveProperty("recipe_id");
     expect(response.body[0]).toHaveProperty("description");
     expect(response.statusCode).toBe(200);
@@ -51,11 +52,6 @@ describe("POST /recipe", () => {
     expect(newRecipe.body).toHaveProperty("recipe_id");
     expect(newRecipe.body).toHaveProperty("description");
     expect(newRecipe.statusCode).toBe(200);
-
-    // make sure we have 3 recipes left on table
-
-    const response = await request(app).get("/recipe");
-    expect(response.body.length).toBe(3);
     done();
   });
 });
@@ -65,14 +61,8 @@ describe("POST /recipe", () => {
 describe("PUT /recipe/:id", () => {
   test("It should update recipes", async (done) => {
     const updatedRecipe = await request(app).put(`/recipe/1/recipe updated`);
-
     expect(updatedRecipe.body).toBe("recipe updated");
     expect(updatedRecipe.statusCode).toBe(200);
-
-    // make sure we have 2 recipes left on table
-
-    const response = await request(app).get("/recipe");
-    expect(response.body.length).toBe(2);
     done();
   });
 });
@@ -89,11 +79,6 @@ describe("DELETE /recipe/:id", () => {
     );
     expect(removedRecipe.body).toEqual("Recipe deleted");
     expect(removedRecipe.statusCode).toBe(200);
-
-    // make sure we have 2 recipes left on table
-
-    const response = await request(app).get("/recipe");
-    expect(response.body.length).toBe(2);
     done();
   });
 });

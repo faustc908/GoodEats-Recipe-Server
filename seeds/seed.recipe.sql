@@ -1,4 +1,4 @@
-/* Seed to give an example */
+/* Seed table */
 
 INSERT INTO recipe
     (description)
@@ -32,6 +32,5 @@ Directions
     Step 5
 
     Bake in preheated oven for 25 minutes. Remove foil, and bake an additional 25 minutes. Cool for 15 minutes before serving.
-
  ')
     
