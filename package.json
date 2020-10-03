@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "jest"
+    "test": "jest",
+    "migrate": "postgrator --config postgrator-config.js",
+    "migrate:test": "env NODE_ENV=test npm run migrate",
+    "migrate:production": "heroku run npm run migrate",
+    "deploy": "git push heroku master",
+    "postdeploy": "npm run migrate:production"
   },
   "author": "Colin Faust",
   "license": "ISC",
@@ -16,7 +21,8 @@
     "express": "^4.17.1",
     "knex": "^0.21.5",
     "nodemon": "^2.0.4",
-    "pg": "^8.3.3"
+    "pg": "^8.3.3",
+    "postgrator-cli": "^3.2.0"
   },
   "devDependencies": {
     "babel-jest": "^26.3.0",
