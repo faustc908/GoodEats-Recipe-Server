@@ -5,15 +5,22 @@ const pool = require("./db");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 dotenv.config();
+const path = require("path");
+const PORT = process.env.PORT || 8000;
+
 // Middleware
 
 app.use(cors());
 app.use(express.json());
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set("port", process.env.PORT || 3000);
-app.locals.title = "recipe";
+
+/*if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/build")));
+}
+
+console.log(__dirname);
+console.log(path.join(__dirname, "/build"));*/
 // CRUD routes
 
 // Route to test routing
@@ -101,6 +108,10 @@ app.put("/recipe/:id/:description", async (req, res) => {
   } catch (error) {
     console.error(error.message);
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on ${PORT}`);
 });
 
 module.exports = app;

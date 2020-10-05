@@ -4,9 +4,8 @@
   "description": "Recipe Finder server",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "test": "jest",
-    "migrate": "postgrator --config postgrator-config.js",
     "migrate:test": "env NODE_ENV=test npm run migrate",
     "migrate:production": "heroku run npm run migrate",
     "deploy": "git push heroku master",
